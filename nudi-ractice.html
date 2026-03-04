@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nudi Kannada Practice · ನುಡಿ ಕನ್ನಡ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0d0905;
+  --s1:#1a1008;
+  --s2:#251708;
+  --s3:#32200e;
+  --key-bg:linear-gradient(175deg,#3c2616 0%,#2a1a0a 55%,#1e1206 100%);
+  --key-hover:linear-gradient(175deg,#4e3220 0%,#3a2414 55%,#2a1a0a 100%);
+  --key-press:linear-gradient(175deg,#d4872c 0%,#b86e1c 55%,#9a580e 100%);
+  --key-special:linear-gradient(175deg,#221508 0%,#181006 55%,#120c03 100%);
+  --key-border:#4a2e16;
+  --key-shadow:0 3px 0 #080503,0 1px 3px rgba(0,0,0,.7);
+  --key-shadow-dn:0 1px 0 #080503;
+  --accent:#d4872c;
+  --accent2:#f09a40;
+  --text:#edddc8;
+  --muted:#8a6840;
+  --dim:#4a3018;
+  --kn-main:#ffd870;
+  --kn-shift:#b89050;
+  --kn-dim:#4a3018;
+  --input-bg:#0f0804;
+}
+
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+body{display:flex;flex-direction:column;font-family:'Cinzel',serif;
+  background:radial-gradient(ellipse at 50% 0%,#1e1208 0%,#0d0905 70%)}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 16px;
+  background:linear-gradient(180deg,#1e1208 0%,#140e05 100%);
+  border-bottom:1px solid var(--s3);
+  flex-shrink:0;
+}
+.title{display:flex;align-items:center;gap:10px}
+.title-en{font-size:.72rem;letter-spacing:3.5px;color:var(--accent);text-transform:uppercase}
+.sep{width:1px;height:14px;background:var(--dim)}
+.title-kn{font-family:'Noto Serif Kannada',serif;font-size:.95rem;color:var(--kn-main)}
+.header-right{display:flex;align-items:center;gap:8px}
+.shift-pill{
+  display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;
+  font-size:.6rem;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--s3);
+  background:var(--s1);color:var(--dim);transition:all .2s;
+}
+.shift-pill.on{background:rgba(212,135,44,.14);color:var(--accent);border-color:var(--accent)}
+.shift-pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.char-ct{font-size:.58rem;letter-spacing:1px;color:var(--dim)}
+
+/* ── MAIN ── */
+main{flex:1;display:flex;flex-direction:column;padding:7px 10px 5px;gap:7px;overflow:hidden;min-height:0}
+
+/* ── PRACTICE AREA ── */
+.practice-wrap{
+  position:relative;background:var(--input-bg);border:1px solid var(--s3);
+  border-radius:8px;overflow:hidden;flex-shrink:0;
+}
+.practice-wrap::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--accent) 50%,transparent 100%);
+  opacity:.5;
+}
+textarea#ta{
+  width:100%;height:72px;background:transparent;border:none;outline:none;
+  color:var(--kn-main);font-family:'Noto Serif Kannada',serif;font-size:1.3rem;
+  line-height:1.7;padding:9px 78px 9px 13px;resize:none;
+  caret-color:var(--accent2);
+}
+textarea#ta::placeholder{color:var(--kn-dim);font-family:'Cinzel',serif;font-size:.75rem}
+.area-btns{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:4px}
+.ab{
+  width:28px;height:27px;display:flex;align-items:center;justify-content:center;
+  background:var(--s2);border:1px solid var(--s3);border-radius:5px;cursor:pointer;
+  color:var(--muted);font-size:.68rem;letter-spacing:.5px;transition:all .15s;
+  font-family:'Cinzel',serif;
+}
+.ab:hover{color:var(--accent2);border-color:var(--accent);background:rgba(212,135,44,.12)}
+.ab svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── KEYBOARD ── */
+.kb-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.keyboard{display:flex;flex-direction:column;gap:3.5px;width:100%;max-width:960px}
+.key-row{display:flex;gap:3px;justify-content:center}
+
+/* ── KEYS ── */
+.key{
+  position:relative;height:var(--kh,48px);flex:1;min-width:0;max-width:60px;
+  background:var(--key-bg);border:1px solid var(--key-border);
+  border-bottom:3px solid #080503;border-radius:5px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:stretch;
+  padding:3px 3px 2px;box-shadow:var(--key-shadow);
+  transition:background .06s,transform .06s,box-shadow .06s;
+  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+  overflow:hidden;
+}
+.key::after{
+  content:'';position:absolute;inset:0 0 40% 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 100%);
+  border-radius:4px 4px 0 0;pointer-events:none;
+}
+.key:hover{background:var(--key-hover)}
+.key:active,.key.kd{
+  background:var(--key-press) !important;
+  transform:translateY(2px);box-shadow:var(--key-shadow-dn);border-bottom-width:1px;
+}
+.key.special{background:var(--key-special);max-width:none}
+.key.special:hover{background:linear-gradient(175deg,#2e1c0a 0%,#221408 55%,#1a1006 100%)}
+.key.shift-key.shift-on{
+  background:linear-gradient(175deg,#4e3218 0%,#3c2812 55%,#2e1e0a 100%) !important;
+  border-color:var(--accent);
+}
+
+/* Key label tiers */
+.k-top{display:flex;justify-content:space-between;align-items:flex-start;min-height:13px}
+.k-shift{font-family:'Noto Serif Kannada',serif;font-size:.55rem;color:var(--kn-shift);line-height:1}
+.k-en{font-family:'Cinzel',serif;font-size:.46rem;color:var(--kn-dim);line-height:1;text-transform:uppercase}
+.k-main{
+  font-family:'Noto Serif Kannada',serif;font-size:.95rem;color:var(--kn-main);
+  line-height:1;text-align:center;flex:1;display:flex;align-items:center;justify-content:center;
+}
+.key.special .k-main{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.5px;color:var(--muted)}
+
+/* Width overrides */
+.key[data-w="bs"]  {max-width:76px;min-width:60px}
+.key[data-w="tab"] {max-width:70px;min-width:54px}
+.key[data-w="bsl"] {max-width:62px;min-width:48px}
+.key[data-w="cap"] {max-width:82px;min-width:64px}
+.key[data-w="ent"] {max-width:90px;min-width:70px}
+.key[data-w="shl"] {max-width:96px;min-width:76px}
+.key[data-w="shr"] {max-width:108px;min-width:84px}
+.key[data-w="spc"] {max-width:400px;min-width:180px}
+
+/* Footer */
+footer{
+  text-align:center;padding:3px;font-size:.56rem;letter-spacing:2px;
+  color:var(--dim);text-transform:uppercase;flex-shrink:0;
+}
+
+/* Ref chip */
+.ref-strip{
+  display:flex;justify-content:center;gap:4px;padding-bottom:2px;flex-shrink:0;
+  flex-wrap:wrap;
+}
+.ref-chip{
+  padding:2px 7px;background:var(--s1);border:1px solid var(--s3);border-radius:10px;
+  font-family:'Noto Serif Kannada',serif;font-size:.75rem;color:var(--kn-shift);
+  cursor:default;transition:all .15s;
+}
+.ref-chip:hover{border-color:var(--accent);color:var(--kn-main)}
+
+@media(max-height:500px){
+  .key{--kh:44px}
+  textarea#ta{height:60px;font-size:1.1rem}
+  .ref-strip{display:none}
+}
+@media(max-height:420px){
+  .key{--kh:40px}
+  .k-main{font-size:.82rem}
+  .k-shift{font-size:.48rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">
+    <span class="title-en">Nudi Kannada</span>
+    <div class="sep"></div>
+    <span class="title-kn">ನುಡಿ ಕನ್ನಡ ಅಭ್ಯಾಸ</span>
+  </div>
+  <div class="header-right">
+    <div class="shift-pill" id="shiftPill">
+      <div class="dot"></div>
+      <span id="shiftLabel">Normal</span>
+    </div>
+    <div class="char-ct" id="charCt">0 ಅಕ್ಷರ</div>
+  </div>
+</header>
+
+<main>
+  <div class="practice-wrap">
+    <textarea id="ta" placeholder="ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ — tap keys below to practice Kannada typing…" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" inputmode="none" readonly></textarea>
+    <div class="area-btns">
+      <div class="ab" id="btnCopy" title="Copy">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </div>
+      <div class="ab" id="btnClear" title="Clear">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-reference matras strip -->
+  <div class="ref-strip" id="refStrip"></div>
+
+  <div class="kb-wrap">
+    <div class="keyboard" id="keyboard"></div>
+  </div>
+</main>
+
+<footer>Tap a key · Physical keyboard supported · Shift = alternate characters</footer>
+
+<script>
+// ── KEY DATA ──────────────────────────────────────────────────────────────────
+// Each key: [keyCode, displayEn, normal-kn, shift-kn, data-w, isSpecial, isShiftKey]
+const ROWS = [
+  // Numbers row
+  [
+    ['Backquote','`','ಒ','ಓ'],
+    ['Digit1','1','೧','!'],
+    ['Digit2','2','೨','@'],
+    ['Digit3','3','೩','#'],
+    ['Digit4','4','೪','$'],
+    ['Digit5','5','೫','%'],
+    ['Digit6','6','೬','^'],
+    ['Digit7','7','೭','&'],
+    ['Digit8','8','೮','*'],
+    ['Digit9','9','೯','('],
+    ['Digit0','0','೦',')'],
+    ['Minus','-','-','_'],
+    ['Equal','=','ಃ','+'],
+    ['Backspace','⌫','⌫','⌫','bs',true],
+  ],
+  // QWERTY row
+  [
+    ['Tab','Tab','⇥','⇥','tab',true],
+    ['KeyQ','q','ಔ','ಊ'],
+    ['KeyW','w','ಐ','ಈ'],
+    ['KeyE','e','ಆ','ಎ'],
+    ['KeyR','r','ರ','ಱ'],
+    ['KeyT','t','ತ','ಥ'],
+    ['KeyY','y','ಯ','ಞ'],
+    ['KeyU','u','ಉ','ಋ'],
+    ['KeyI','i','ಇ','ಏ'],
+    ['KeyO','o','ಒ','ಓ'],
+    ['KeyP','p','ಪ','ಫ'],
+    ['BracketLeft','[','ಡ','ಢ'],
+    ['BracketRight',']','ಟ','ಠ'],
+    ['Backslash','\\','ಣ','ಧ','bsl'],
+  ],
+  // ASDF row
+  [
+    ['CapsLock','Caps','Caps','Caps','cap',true],
+    ['KeyA','a','ಅ','ಾ'],
+    ['KeyS','s','ಸ','ಷ'],
+    ['KeyD','d','ದ','ಡ'],
+    ['KeyF','f','ಫ','್'],
+    ['KeyG','g','ಗ','ಘ'],
+    ['KeyH','h','ಹ','ಙ'],
+    ['KeyJ','j','ಜ','ಝ'],
+    ['KeyK','k','ಕ','ಖ'],
+    ['KeyL','l','ಲ','ಳ'],
+    ['Semicolon',';','ಶ','ಕ್ಷ'],
+    ['Quote',"'",'ಷ','ಜ್ಞ'],
+    ['Enter','↵','↵','↵','ent',true],
+  ],
+  // ZXCV row
+  [
+    ['ShiftLeft','⇧','⇧','⇧','shl',true,true],
+    ['KeyZ','z','ಝ','ಝ'],
+    ['KeyX','x','ಕ್ಷ','ಶ'],
+    ['KeyC','c','ಚ','ಛ'],
+    ['KeyV','v','ವ','ವ'],
+    ['KeyB','b','ಬ','ಭ'],
+    ['KeyN','n','ನ','ಣ'],
+    ['KeyM','m','ಮ','ಂ'],
+    ['Comma',',',',','<'],
+    ['Period','.','.','>'],
+    ['Slash','/','/','>'],
+    ['ShiftRight','⇧','⇧','⇧','shr',true,true],
+  ],
+  // Space row
+  [
+    ['Space','Space','','','spc',true],
+  ],
+];
+
+// Key lookup: code → {normal, shift}
+const KEY_MAP = {};
+ROWS.forEach(row => row.forEach(k => {
+  KEY_MAP[k[0]] = { normal: k[2], shift: k[3] };
+}));
+
+// Quick-ref matras
+const MATRAS = [
+  {label:'ಾ',desc:'ಆ'},
+  {label:'ಿ',desc:'ಇ'},
+  {label:'ೀ',desc:'ಈ'},
+  {label:'ು',desc:'ಉ'},
+  {label:'ೂ',desc:'ಊ'},
+  {label:'ೃ',desc:'ಋ'},
+  {label:'ೆ',desc:'ಎ'},
+  {label:'ೇ',desc:'ಏ'},
+  {label:'ೈ',desc:'ಐ'},
+  {label:'ೊ',desc:'ಒ'},
+  {label:'ೋ',desc:'ಓ'},
+  {label:'ೌ',desc:'ಔ'},
+  {label:'ಂ',desc:'ಅನು'},
+  {label:'ಃ',desc:'ವಿಸ'},
+  {label:'್',desc:'ವಿರ'},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let shiftActive = false;
+let capsLock = false;
+
+// ── DOM REFS ─────────────────────────────────────────────────────────────────
+const ta = document.getElementById('ta');
+const shiftPill = document.getElementById('shiftPill');
+const shiftLabel = document.getElementById('shiftLabel');
+const charCt = document.getElementById('charCt');
+const keyboard = document.getElementById('keyboard');
+const refStrip = document.getElementById('refStrip');
+
+// ── BUILD KEYBOARD ────────────────────────────────────────────────────────────
+ROWS.forEach(row => {
+  const rowEl = document.createElement('div');
+  rowEl.className = 'key-row';
+  row.forEach(([code, en, norm, shft, w, isSpecial, isShiftKey]) => {
+    const key = document.createElement('div');
+    key.className = 'key' + (isSpecial?' special':'') + (isShiftKey?' shift-key':'');
+    key.dataset.code = code;
+    if (w) key.dataset.w = w;
+
+    const top = document.createElement('div'); top.className = 'k-top';
+    const shiftSpan = document.createElement('span'); shiftSpan.className = 'k-shift';
+    const enSpan = document.createElement('span'); enSpan.className = 'k-en';
+
+    // Only show shift label if it differs from normal and isn't a special key label
+    if (!isSpecial && shft !== norm) shiftSpan.textContent = shft;
+    if (!isSpecial) enSpan.textContent = en;
+
+    top.appendChild(shiftSpan);
+    top.appendChild(enSpan);
+
+    const main = document.createElement('div'); main.className = 'k-main';
+    main.textContent = norm;
+
+    key.appendChild(top);
+    key.appendChild(main);
+
+    // ── Tap / Click ──
+    key.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      handleKey(code, key);
+    });
+
+    rowEl.appendChild(key);
+  });
+  keyboard.appendChild(rowEl);
+});
+
+// ── BUILD REF STRIP ───────────────────────────────────────────────────────────
+MATRAS.forEach(m => {
+  const chip = document.createElement('div');
+  chip.className = 'ref-chip';
+  chip.title = m.desc;
+  chip.textContent = m.label;
+  chip.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    insertAtCursor(m.label);
+    flash(chip);
+  });
+  refStrip.appendChild(chip);
+});
+
+// ── KEY HANDLER ───────────────────────────────────────────────────────────────
+function handleKey(code, el) {
+  const isShifted = shiftActive !== capsLock;
+
+  if (code === 'ShiftLeft' || code === 'ShiftRight') {
+    shiftActive = !shiftActive;
+    updateShiftUI();
+    updateKeyLabels();
+    if (el) { el.classList.add('kd'); setTimeout(()=>el.classList.remove('kd'),120) }
+    return;
+  }
+
+  if (code === 'CapsLock') {
+    capsLock = !capsLock;
+    updateShiftUI();
+    updateKeyLabels();
+    if (el) { el.classList.add('kd'); setTimeout(()=>el.classList.remove('kd'),120) }
+    return;
+  }
+
+  if (el) {
+    el.classList.add('kd');
+    setTimeout(()=>el.classList.remove('kd'), 120);
+  }
+
+  if (code === 'Backspace') { deleteGrapheme(); return; }
+  if (code === 'Enter') { insertAtCursor('\n'); return; }
+  if (code === 'Tab') { insertAtCursor('  '); return; }
+  if (code === 'Space') { insertAtCursor(' '); return; }
+
+  const map = KEY_MAP[code];
+  if (!map) return;
+  const ch = isShifted ? map.shift : map.normal;
+  if (ch && ch !== '⌫' && ch !== '⇥' && ch !== '↵' && ch !== '⇧' && ch !== 'Caps') {
+    insertAtCursor(ch);
+    // auto-release shift (like a real keyboard)
+    if (shiftActive) {
+      shiftActive = false;
+      updateShiftUI();
+      updateKeyLabels();
+    }
+  }
+}
+
+// ── TEXT HELPERS ──────────────────────────────────────────────────────────────
+function writeTA(newValue, newCursor) {
+  ta.removeAttribute('readonly');
+  ta.value = newValue;
+  ta.selectionStart = ta.selectionEnd = newCursor;
+  ta.setAttribute('readonly', '');
+  ta.focus();
+  updateCount();
+}
+
+function insertAtCursor(ch) {
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const v = ta.value;
+  writeTA(v.slice(0, s) + ch + v.slice(e), s + ch.length);
+}
+
+function deleteGrapheme() {
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  if (s === 0 && s === e) return;
+  if (s !== e) { writeTA(ta.value.slice(0, s) + ta.value.slice(e), s); return; }
+  const text = ta.value.slice(0, s);
+  if (!text.length) return;
+  let segments;
+  try {
+    const seg = new Intl.Segmenter('kn', {granularity:'grapheme'});
+    segments = [...seg.segment(text)];
+  } catch {
+    segments = [...text].map((ch,i)=>({segment:ch,index:i}));
+  }
+  const last = segments[segments.length - 1];
+  writeTA(text.slice(0, last.index) + ta.value.slice(s), last.index);
+}
+
+function updateCount() {
+  const segs = (() => {
+    try {
+      return [...new Intl.Segmenter('kn',{granularity:'grapheme'}).segment(ta.value)].length;
+    } catch { return [...ta.value].length; }
+  })();
+  charCt.textContent = segs + ' ಅಕ್ಷರ';
+}
+
+// ── UI UPDATES ────────────────────────────────────────────────────────────────
+function updateShiftUI() {
+  const on = shiftActive !== capsLock;
+  shiftPill.classList.toggle('on', on || capsLock);
+  shiftLabel.textContent = capsLock ? 'Caps' : shiftActive ? 'Shift' : 'Normal';
+
+  // Highlight shift keys
+  document.querySelectorAll('.shift-key').forEach(k => {
+    k.classList.toggle('shift-on', on);
+  });
+}
+
+function updateKeyLabels() {
+  const isShifted = shiftActive !== capsLock;
+  document.querySelectorAll('.key:not(.special)').forEach(key => {
+    const code = key.dataset.code;
+    if (!code) return;
+    const map = KEY_MAP[code];
+    if (!map) return;
+    const mainEl = key.querySelector('.k-main');
+    const shiftEl = key.querySelector('.k-shift');
+    if (mainEl) mainEl.textContent = isShifted ? map.shift : map.normal;
+    if (shiftEl) {
+      // show the other character (alt)
+      const alt = isShifted ? map.normal : map.shift;
+      shiftEl.textContent = (alt && alt !== mainEl.textContent && alt !== '⌫') ? alt : '';
+    }
+  });
+}
+
+// ── PHYSICAL KEYBOARD ─────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target === ta) {
+    if (e.code === 'Backspace') return; // let browser handle deletion natively in textarea
+    if (e.code === 'Enter') return;
+  }
+
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    if (!e.repeat) { shiftActive = true; updateShiftUI(); updateKeyLabels(); }
+    return;
+  }
+  if (e.code === 'CapsLock') { e.preventDefault(); capsLock = !capsLock; updateShiftUI(); updateKeyLabels(); return; }
+
+  // Prevent browser defaults for alpha keys
+  if (e.code.startsWith('Key') || e.code.startsWith('Digit') ||
+      ['Backquote','Minus','Equal','BracketLeft','BracketRight','Backslash',
+       'Semicolon','Quote','Comma','Period','Slash','Space'].includes(e.code)) {
+    e.preventDefault();
+  }
+
+  const domKey = document.querySelector(`.key[data-code="${e.code}"]`);
+  handleKey(e.code, domKey);
+});
+
+document.addEventListener('keyup', e => {
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    shiftActive = false;
+    updateShiftUI();
+    updateKeyLabels();
+  }
+});
+
+// ── BUTTONS ───────────────────────────────────────────────────────────────────
+document.getElementById('btnClear').addEventListener('click', () => {
+  ta.value = ''; updateCount(); ta.focus();
+});
+document.getElementById('btnCopy').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(ta.value);
+    const btn = document.getElementById('btnCopy');
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent2)';
+    setTimeout(()=>{ btn.style.borderColor=''; btn.style.color=''; }, 1000);
+  } catch(e){}
+});
+
+function flash(el) {
+  el.style.borderColor = 'var(--accent)';
+  el.style.color = 'var(--kn-main)';
+  setTimeout(()=>{ el.style.borderColor=''; el.style.color=''; }, 300);
+}
+
+// Prevent system keyboard on textarea tap
+ta.addEventListener('touchstart', e => e.preventDefault(), {passive:false});
+ta.addEventListener('mousedown', e => e.preventDefault());
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+ta.focus();
+updateCount();
+updateKeyLabels(); // init shift labels
+
+// Keep focus on ta for physical keyboard
+document.addEventListener('pointerup', () => { setTimeout(()=>ta.focus(),50) });
+</script>
+</body>
+</html>
